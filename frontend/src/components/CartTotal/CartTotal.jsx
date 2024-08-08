@@ -33,7 +33,8 @@ const CartTotal = () => {
             </div>
             <hr />
           </div>
-          <button type='submit' onClick={()=>navigate('/order')} > PROCEED TO PAYMENT </button>
+          <button type='submit' onClick={()=>navigate('/order')} > Card Payment </button>
+
         </div>
   )
 }
