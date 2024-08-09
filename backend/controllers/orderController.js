@@ -78,7 +78,7 @@ const placeCodOrder= async(req , res) =>{
         
         await orderModel.findByIdAndUpdate(id,{payment:true});
         
-        res.json({success:true, session_url:"http://localhost:5173/myorders"});
+        res.json({success:true, session_url:frontend_url});
   
        
     } catch (error) {
