@@ -1,10 +1,11 @@
-import { listOrders, placeOrder, updateStatus, userOrders, verifyOrder } from "../controllers/orderController.js";
+import { listOrders, placeCardOrder, placeCodOrder , updateStatus, userOrders, verifyOrder } from "../controllers/orderController.js";
 import express from "express";
 import authMiddleware from "../middleware/auth.js";
 
 const orderRouter = express.Router();
 
-orderRouter.post("/place",authMiddleware, placeOrder);
+orderRouter.post("/place",authMiddleware, placeCardOrder);
+orderRouter.post("/placecod",authMiddleware, placeCodOrder);
 orderRouter.post("/verify", verifyOrder)
 orderRouter.post("/userorders",authMiddleware, userOrders)
 orderRouter.get("/list", listOrders)

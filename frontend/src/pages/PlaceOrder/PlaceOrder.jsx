@@ -2,14 +2,15 @@ import React, { useContext, useEffect, useState } from 'react'
 import './PlaceOrder.css'
 import { StoreContext } from '../../context/StoreContext'
 import { useNavigate } from 'react-router-dom';
-import CartTotal from '../../components/CartTotal/CartTotal';
 import axios from 'axios';
+
 
 
 const PlaceOrder = () => {
 
   const {getTotalCartAmount,token,food_list,cartItems,url} = useContext(StoreContext)
   const navigate = useNavigate();
+  //const [type,setType] =useState("");
   const [data,SetData] = useState({
     firstName: "",
     lastName: "",
@@ -44,7 +45,11 @@ const PlaceOrder = () => {
       amount: getTotalCartAmount()+2, 
     }
     console.log(orderData);
+    
+  if(event.nativeEvent.submitter.name=='card'){
+  
     let response = await axios.post(url+"/api/order/place",orderData,{headers:{token}})
+  
     if(response.data.success){
       const {session_url} = response.data;
       window.location.replace(session_url);
@@ -53,6 +58,24 @@ const PlaceOrder = () => {
       alert(Error);
       console.log(Error);
     }
+  }
+  else{
+    console.log("in cod")
+    console.log(orderData);
+    
+    let response = await axios.post(url+"/api/order/placecod",orderData,{headers:{token}})
+  
+    if(response.data.success){
+      const {session_url} = response.data;
+      window.location.replace(session_url);
+    }
+    else{
+      alert(Error);
+      console.log("in plordr err cod");
+      console.log(Error);
+    }
+   
+  }
   }
 
   useEffect(()=>{
@@ -94,7 +117,27 @@ const PlaceOrder = () => {
       <div className="place-order-right">
       
       <div className="cart-total">
-          <CartTotal />
+          <h2>Cart Total</h2>
+          <div>
+
+            <div className="cart-total-details">
+              <p>Subtotal</p>
+              <p>${getTotalCartAmount()}</p>
+            </div>
+            <hr />
+            <div className="cart-total-details">
+                <p> Delivery Fee </p>
+                <p> ${getTotalCartAmount()===0?0:2} </p>        
+            </div>
+            <hr />
+            <div className="cart-total-details">
+              <p> Total </p>
+              <p> ${getTotalCartAmount()===0?0:getTotalCartAmount()+2} </p>
+            </div>
+            <hr />
+          </div>
+          <button type='submit' name='card' onClick={()=>navigate('/order')} > Card Payment </button>
+          <button type='submit' name='cod' onClick={()=>navigate('/order')} > Cash On Delivery </button>
         </div>
 
       </div>

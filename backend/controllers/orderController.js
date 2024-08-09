@@ -5,7 +5,7 @@ import Stripe from "stripe"
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 //placing user order from frontend
-const placeOrder= async(req , res) =>{
+const placeCardOrder= async(req , res) =>{
 
     const frontend_url = "https://food-del-frontend-k6yk.onrender.com";
     try {
@@ -56,20 +56,62 @@ const placeOrder= async(req , res) =>{
     }
 }
 
+//cod
+const placeCodOrder= async(req , res) =>{
+
+    const frontend_url = "https://food-del-frontend-k6yk.onrender.com";
+    //const frontend_url = "http://localhost:5173/";
+    try {
+        const newOrder = new orderModel({
+            userId:req.body.userId,
+            items:req.body.items,
+            amount:req.body.amount,
+            address:req.body.address,
+            
+        })
+        await newOrder.save();
+        await userModel.findByIdAndUpdate(req.body.userId,{cartData:{}});
+        console.log("userId: " + req.body.userId)
+        
+        const id= newOrder._id;
+        console.log("order:"+id);
+        
+        await orderModel.findByIdAndUpdate(id,{payment:true});
+        
+        res.json({success:true, session_url:"http://localhost:5173/myorders"});
+  
+       
+    } catch (error) {
+        console.log("im here sad");    
+        console.log(error);
+        res.json({success:false, message:"error"})    
+    }
+}
+
+
+
+
 const verifyOrder = async ( req, res ) => {
     const {orderId, success} = req.body;
-
+    console.log("im in verify");
+    
     try {
         if(success=="true"){
             await orderModel.findByIdAndUpdate(orderId,{payment:true});
             res.json({success:true, message:"Paid"})
+            console.log("verord pass");
+
         }
         else{
             await orderModel.findByIdAndDelete(orderId);
             res.json({success:false, message:"Not Paid"})
+            console.log("verord err");
+
         }
     } catch (error) {
         console.log(error);
+        console.log("verord err");
+        
         res.json({success:false, message:"Error"})
     }
 }
@@ -110,4 +152,4 @@ const updateStatus = async (req, res) => {
 
 
 
-export {placeOrder, verifyOrder, userOrders, listOrders, updateStatus}
+export {placeCardOrder, placeCodOrder, verifyOrder, userOrders, listOrders, updateStatus}
