@@ -5,7 +5,11 @@ import { StoreContext } from '../../context/StoreContext';
 
 const FoodItem = ({id,name,price,description,image}) => {
 
-    const{cartItems, addToCart, removeFromCart,url} = useContext(StoreContext)
+    const{cartItems, addToCart, removeFromCart,url, getTotalCartQuantity} = useContext(StoreContext)
+
+    useEffect(() => {
+        document.tile =' ${getTotalCartQuantity} in cart ';
+      },[addToCart, removeFromCart]);
 
   return (
     <div className='food-item'>

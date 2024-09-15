@@ -46,6 +46,20 @@ const StoreContextProvider = (props) =>{
         return totalAmount;
     }
 
+    //total items in cart
+    const getTotalCartQuantity =() => {
+        let total = 0;
+        for(const item in cartItems)
+        {
+            if(cartItems[item]>0){
+            let itemInfo = food_list.find((product)=>product._id === item);
+            total += 1;
+        }
+        }
+        
+        return total;
+    }
+
     const fetchFoodList = async () =>{
         const response = await axios.get(url+"/api/food/list")
         setFoodList(response.data.data);
@@ -77,6 +91,7 @@ const StoreContextProvider = (props) =>{
         addToCart,
         removeFromCart,
         getTotalCartAmount,
+        getTotalCartQuantity,
         url,
         token,
         setToken,
