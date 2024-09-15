@@ -53,7 +53,7 @@ const StoreContextProvider = (props) =>{
         {
             if(cartItems[item]>0){
             //let itemInfo = food_list.find((product)=>product._id === item);
-            total += 1;
+            total = total + 1;
         }
         }
         
