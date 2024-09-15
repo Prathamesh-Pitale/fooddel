@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useRef, useState, useEffect } from 'react'
 import './FoodItem.css'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../context/StoreContext';
@@ -7,17 +7,18 @@ const FoodItem = ({id,name,price,description,image}) => {
 
     const{cartItems, addToCart, removeFromCart,url, getTotalCartQuantity} = useContext(StoreContext)
 
-    const documentDefined = typeof document !== 'undefined';
-    const originalTitle = React.useRef(documentDefined ? document.title : null);
+    //const documentDefined = typeof document !== 'undefined';
+    //const originalTitle = React.useRef(documentDefined ? document.title : null);
 
     useEffect(() => {
-        if (!documentDefined) return;
+       // if (!documentDefined) return;
 
-       if (document.title !== title) document.tile =' ${getTotalCartQuantity} in cart ';
+       //if (document.title !== title)
+         document.title =' ${getTotalCartQuantity} in cart ';
 
-       return () => {
-        document.title = originalTitle.current;
-      };
+       //return () => {
+        //document.title = originalTitle.current;
+      //};
       },[addToCart, removeFromCart]);
 
   return (
