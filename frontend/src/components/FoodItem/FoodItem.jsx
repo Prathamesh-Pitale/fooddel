@@ -7,18 +7,18 @@ const FoodItem = ({id,name,price,description,image}) => {
 
     const{cartItems, addToCart, removeFromCart,url, getTotalCartQuantity} = useContext(StoreContext)
 
-    const documentDefined = typeof document !== 'undefined';
-    const originalTitle = React.useRef(documentDefined ? document.title : null);
+   // const documentDefined = typeof document !== 'undefined';
+   // const originalTitle = React.useRef(documentDefined ? document.title : null);
 
     useEffect(() => {
-       if (!documentDefined) return;
+       //if (!documentDefined) return;
 
-       if (document.title !== title)
+       if (getTotalCartQuantity()!=0 )
          document.title =` ${getTotalCartQuantity()} in cart `;
 
-       return () => {
+       /*return () => {
         document.title = originalTitle.current;
-      };
+      };*/
       },[addToCart, removeFromCart]);
 
   return (
