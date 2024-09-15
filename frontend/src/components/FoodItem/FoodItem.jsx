@@ -14,7 +14,10 @@ const FoodItem = ({id,name,price,description,image}) => {
        //if (!documentDefined) return;
 
        if (getTotalCartQuantity()!=0 )
-         document.title =` ${getTotalCartQuantity()} in cart `;
+        { document.title =` ${getTotalCartQuantity()} in cart `;}
+       else{
+        document.title = ` Food-Del `;
+       }
 
        /*return () => {
         document.title = originalTitle.current;
