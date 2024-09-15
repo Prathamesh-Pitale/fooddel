@@ -7,8 +7,17 @@ const FoodItem = ({id,name,price,description,image}) => {
 
     const{cartItems, addToCart, removeFromCart,url, getTotalCartQuantity} = useContext(StoreContext)
 
+    const documentDefined = typeof document !== 'undefined';
+    const originalTitle = React.useRef(documentDefined ? document.title : null);
+
     useEffect(() => {
-        document.tile =' ${getTotalCartQuantity} in cart ';
+        if (!documentDefined) return;
+
+       if (document.title !== title) document.tile =' ${getTotalCartQuantity} in cart ';
+
+       return () => {
+        document.title = originalTitle.current;
+      };
       },[addToCart, removeFromCart]);
 
   return (
