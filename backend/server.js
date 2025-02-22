@@ -15,7 +15,12 @@ const port = process.env.PORT || 4000
 
 // middleware
 app.use(express.json())
-app.use(cors())
+//app.use(cors())
+app.use(cors({
+    origin: "https://food-del-frontend-k6yk.onrender.com/", // Update with your actual frontend URL
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    allowedHeaders: "Content-Type"
+  }));
 
 //db connection
 connectDB();
