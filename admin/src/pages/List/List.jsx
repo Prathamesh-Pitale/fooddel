@@ -20,17 +20,37 @@ const List = ({url}) => {
     }
   }
 
-  const removeFood= async (foodId) =>{
-    //console.log(foodId);
-    const response = await axios.post(`${url}/api/food/remove`, {id: foodId});
-    await fetchList();
-    if(response.data.success){
-      toast.success(response.data.message);
+  // const removeFood= async (foodId) =>{
+  //   //console.log(foodId);
+  //   const response = await axios.post(`${url}/api/food/remove`, {id: foodId});
+  //   await fetchList();
+  //   if(response.data.success){
+  //     toast.success(response.data.message);
 
-    }else{
-      toast.error("Error");
+  //   }else{
+  //     toast.error("Error");
+  //   }
+  // }
+
+  const removeFood = async (foodId) => {
+    console.log("Attempting to delete food with ID:", foodId);
+  
+    try {
+      const response = await axios.post(`${url}/api/food/remove`, { id: foodId });
+      console.log("Backend Response:", response.data);
+  
+      if (response.data.success) {
+        toast.success(response.data.message);
+        await fetchList(); // Refresh the list after deleting
+      } else {
+        toast.error("Error deleting food: " + response.data.message);
+      }
+    } catch (error) {
+      console.error("Error removing food:", error);
+      toast.error("Failed to remove food. Check console for details.");
     }
-  }
+  };
+  
 
   useEffect(() => {
     fetchList()
