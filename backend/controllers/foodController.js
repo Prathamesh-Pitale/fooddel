@@ -1,4 +1,6 @@
 import foodModel from  "../models/foodModel.js";
+import cloudinary from 'cloudinary';
+
 import fs from 'fs';
 
 //add food item
