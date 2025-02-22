@@ -67,38 +67,40 @@ const listFood = async (req,res) => {
 }
 
 //remove food item
-const removeFood = async (req,res)=>{
-    try{
-        //find food model by id
-        const food= await foodModel.findById(req.body.id);
+
+const removeFood = async (req, res) => {
+    try {
+        // Find food by ID
+        const food = await foodModel.findById(req.body.id);
         if (!food) {
             return res.json({ success: false, message: "Food item not found" });
         }
+
         // Extract public ID from Cloudinary URL
-        const imageUrl = food.image; 
+        const imageUrl = food.image;
         const parts = imageUrl.split('/');
-        const fileName = parts.pop().split('.')[0]; // Extracts the unique ID
-        const folder = parts[parts.length - 1]; // Assumes folder is before the file name
+        const fileName = parts.pop().split('.')[0]; // Extract unique ID
+        const folder = parts[parts.length - 1]; // Extract folder name
         const publicId = `${folder}/${fileName}`;
+
         // Delete from Cloudinary
-        await cloudinary.v2.uploader.destroy(publicId);
-        console.log("Cloudinary Delete Response:", result); 
+        const result = await cloudinary.uploader.destroy(publicId);
+        console.log("Cloudinary Delete Response:", result);
+
         if (result.result !== "ok") {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
         }
-      
-        //delete from folder
-        //fs.unlink(`uploads/${food.image}`,()=>{})
-        //delete from db
+
+        // Delete from DB
         await foodModel.findByIdAndDelete(req.body.id);
 
-        res.json({success: true, message:"Food removed"})
-    }catch(error){
-        console.log(error)
-        res.json({success: false, message: "Error"})
+        res.json({ success: true, message: "Food removed successfully" });
+    } catch (error) {
+        console.error("Error deleting food:", error);
+        res.json({ success: false, message: "Error deleting food" });
     }
+};
 
-}
 
 
 export {addFood, listFood, removeFood}
