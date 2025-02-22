@@ -80,7 +80,11 @@ const removeFood = async (req,res)=>{
         const publicId = `${folder}/${fileName}`;
         // Delete from Cloudinary
         await cloudinary.v2.uploader.destroy(publicId);
-                
+        console.log("Cloudinary Delete Response:", result); 
+        if (result.result !== "ok") {
+            return res.json({ success: false, message: "Failed to delete from Cloudinary" });
+        }
+      
         //delete from folder
         //fs.unlink(`uploads/${food.image}`,()=>{})
         //delete from db
