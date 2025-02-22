@@ -87,6 +87,8 @@ const removeFood = async (req, res) => {
             .slice(-2) // Take the last 2 parts (folder + filename)
             .join('/') // Join them to form a proper public_id
             .split('.')[0]; // Remove the file extension
+            console.log("Image URL from DB:", imageUrl);
+            console.log("Extracted public ID:", publicId);
 
         // Delete from Cloudinary
         const result = await cloudinary.uploader.destroy(publicId);
