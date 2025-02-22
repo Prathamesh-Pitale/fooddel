@@ -70,43 +70,41 @@ const listFood = async (req,res) => {
 
 const removeFood = async (req, res) => {
     try {
-        // Find food by ID
+        // Find food item by ID
         const food = await foodModel.findById(req.body.id);
         if (!food) {
             return res.json({ success: false, message: "Food item not found" });
         }
 
-        // Extract public ID from Cloudinary URL
+        // Extract Cloudinary public ID
         const imageUrl = food.image;
-        // const parts = imageUrl.split('/');
-        // const fileName = parts.pop().split('.')[0]; // Extract unique ID
-        // const folder = parts[parts.length - 1]; // Extract folder name
-        // const publicId = `${folder}/${fileName}`;
-        const publicId = imageUrl
-            .split('/')
-            .slice(-2) // Take the last 2 parts (folder + filename)
-            .join('/') // Join them to form a proper public_id
-            .split('.')[0]; // Remove the file extension
-            console.log("Image URL from DB:", imageUrl);
-            console.log("Extracted public ID:", publicId);
+        console.log("Image URL from DB:", imageUrl); // Debug log 1
+
+        // Extracting public ID properly
+        const parts = imageUrl.split('/');
+        const fileName = parts.pop().split('.')[0]; // Extract file name without extension
+        const publicId = `food_images/${fileName}`;  // Ensure the correct folder path
+
+        console.log(" Extracted public ID:", publicId); // Debug log 2
 
         // Delete from Cloudinary
         const result = await cloudinary.uploader.destroy(publicId);
-        console.log("Cloudinary Delete Response:", result);
+        console.log(" Cloudinary Delete Response:", result); // Debug log 3
 
         if (result.result !== "ok") {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
         }
 
-        // Delete from DB
+        // Delete from database
         await foodModel.findByIdAndDelete(req.body.id);
+        res.json({ success: true, message: "Food removed" });
 
-        res.json({ success: true, message: "Food removed successfully" });
     } catch (error) {
-        console.error("Error deleting food:", error);
-        res.json({ success: false, message: "Error deleting food" });
+        console.error(" Error in removeFood:", error); // Debug log 4
+        res.json({ success: false, message: "Error" });
     }
 };
+
 
 
 
