@@ -70,39 +70,43 @@ const listFood = async (req,res) => {
 
 const removeFood = async (req, res) => {
     try {
-        // Find food item by ID
+        // 1️⃣ Find food item by ID
         const food = await foodModel.findById(req.body.id);
         if (!food) {
             return res.json({ success: false, message: "Food item not found" });
         }
 
-        // Extract Cloudinary public ID correctly
-        console.log("🔥 Full image field from DB:", food.image);
+        console.log("🔥 Full image URL from DB:", food.image);
 
+        // 2️⃣ Extract Cloudinary public ID
         const imageUrl = food.image;
-        const parts = imageUrl.split('/');
-        const fileNameWithExt = parts.pop();  // Extracts "1740250932691-Do%20it%20now.jpeg.png"
-        const fileName = fileNameWithExt.replace(/\.[^.]+$/, ''); // Removes the last extension ONLY
-        const folder = parts[parts.length - 1];  // Extracts "food_images"
+        const urlParts = imageUrl.split('/');
+        const fileNameWithExt = decodeURIComponent(urlParts.pop()); // Decode URL-encoded filenames
+        const folder = urlParts[urlParts.length - 2]; // Extracts "food_images"
+
+        // ✅ Remove ALL extensions (fixing `.jpeg.png` issue)
+        const fileName = fileNameWithExt.replace(/\.(jpeg|jpg|png|gif|webp|svg|bmp|tiff|jfif)$/i, '');
+
         const publicId = `${folder}/${fileName}`;
 
-        console.log("🛠 Corrected public ID for deletion:", publicId);
+        console.log("🛠 Final Cloudinary Public ID:", publicId);
 
-        // Delete from Cloudinary
+        // 3️⃣ Delete from Cloudinary
         const result = await cloudinary.uploader.destroy(publicId);
         console.log("🗑 Cloudinary Delete Response:", result);
 
-        if (result.result !== "ok") {
+        if (result.result !== "ok" && result.result !== "not found") {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
         }
 
-        // Delete from database
+        // 4️⃣ Delete from Database
         await foodModel.findByIdAndDelete(req.body.id);
-        res.json({ success: true, message: "Food removed" });
+
+        res.json({ success: true, message: "Food removed successfully!" });
 
     } catch (error) {
         console.error("❌ Error in removeFood:", error);
-        res.json({ success: false, message: "Error" });
+        res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
 
