@@ -76,20 +76,21 @@ const removeFood = async (req, res) => {
             return res.json({ success: false, message: "Food item not found" });
         }
 
-        // Extract Cloudinary public ID
+        // Extract Cloudinary public ID correctly
+        console.log("🔥 Full image field from DB:", food.image);
+
         const imageUrl = food.image;
-        console.log("Image URL from DB:", imageUrl); // Debug log 1
-
-        // Extracting public ID properly
         const parts = imageUrl.split('/');
-        const fileName = parts.pop().split('.')[0]; // Extract file name without extension
-        const publicId = `food_images/${fileName}`;  // Ensure the correct folder path
+        const fileNameWithExt = parts.pop();  // Extracts "1740250932691-Do%20it%20now.jpeg.png"
+        const fileName = fileNameWithExt.replace(/\.[^.]+$/, ''); // Removes the last extension ONLY
+        const folder = parts[parts.length - 1];  // Extracts "food_images"
+        const publicId = `${folder}/${fileName}`;
 
-        console.log(" Extracted public ID:", publicId); // Debug log 2
+        console.log("🛠 Corrected public ID for deletion:", publicId);
 
         // Delete from Cloudinary
         const result = await cloudinary.uploader.destroy(publicId);
-        console.log(" Cloudinary Delete Response:", result); // Debug log 3
+        console.log("🗑 Cloudinary Delete Response:", result);
 
         if (result.result !== "ok") {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
@@ -100,7 +101,7 @@ const removeFood = async (req, res) => {
         res.json({ success: true, message: "Food removed" });
 
     } catch (error) {
-        console.error(" Error in removeFood:", error); // Debug log 4
+        console.error("❌ Error in removeFood:", error);
         res.json({ success: false, message: "Error" });
     }
 };
