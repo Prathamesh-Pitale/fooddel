@@ -7,12 +7,25 @@ const foodRouter = express.Router();
 
 // Image Storage Engine
 
+// const storage = multer.diskStorage({
+//     destination:"uploads",
+//     filename:(req,file,cb)=>{
+//         return cb(null,`${Date.now()}${file.originalname}`)
+//     }
+// })
+
 const storage = multer.diskStorage({
-    destination:"uploads",
-    filename:(req,file,cb)=>{
-        return cb(null,`${Date.now()}${file.originalname}`)
-    }
-})
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(path.resolve(), "uploads"); // Ensures absolute path
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        return cb(null, `${Date.now()}-${file.originalname}`);
+    },
+});
+
+
+
 
 const upload = multer({storage:storage})
 
