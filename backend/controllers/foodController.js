@@ -78,10 +78,15 @@ const removeFood = async (req, res) => {
 
         // Extract public ID from Cloudinary URL
         const imageUrl = food.image;
-        const parts = imageUrl.split('/');
-        const fileName = parts.pop().split('.')[0]; // Extract unique ID
-        const folder = parts[parts.length - 1]; // Extract folder name
-        const publicId = `${folder}/${fileName}`;
+        // const parts = imageUrl.split('/');
+        // const fileName = parts.pop().split('.')[0]; // Extract unique ID
+        // const folder = parts[parts.length - 1]; // Extract folder name
+        // const publicId = `${folder}/${fileName}`;
+        const publicId = imageUrl
+            .split('/')
+            .slice(-2) // Take the last 2 parts (folder + filename)
+            .join('/') // Join them to form a proper public_id
+            .split('.')[0]; // Remove the file extension
 
         // Delete from Cloudinary
         const result = await cloudinary.uploader.destroy(publicId);
