@@ -69,8 +69,18 @@ const removeFood = async (req,res)=>{
     try{
         //find food model by id
         const food= await foodModel.findById(req.body.id);
+        if (!food) {
+            return res.json({ success: false, message: "Food item not found" });
+        }
+        // Extract public ID from Cloudinary URL
+        const imageUrl = food.image;
+        const publicId = imageUrl.split('/').pop().split('.')[0]; // Extracts the unique ID before the file extension
+
+        // Delete from Cloudinary
+        await cloudinary.v2.uploader.destroy(`food_images/${publicId}`);
+        
         //delete from folder
-        fs.unlink(`uploads/${food.image}`,()=>{})
+        //fs.unlink(`uploads/${food.image}`,()=>{})
         //delete from db
         await foodModel.findByIdAndDelete(req.body.id);
 
