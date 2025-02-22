@@ -16,11 +16,29 @@ const port = process.env.PORT || 4000
 // middleware
 app.use(express.json())
 //app.use(cors())
-app.use(cors({
-    origin: "https://food-del-frontend-k6yk.onrender.com/", // Update with your actual frontend URL
+
+const allowedOrigins = [
+    "https://food-del-frontend-k6yk.onrender.com",
+    "https://food-del-admin-il59.onrender.com"
+  ];
+  
+  app.use(cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type"
+    allowedHeaders: "Content-Type,Authorization"
   }));
+
+// app.use(cors({
+//     origin: "https://food-del-frontend-k6yk.onrender.com/", // Update with your actual frontend URL
+//     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+//     allowedHeaders: "Content-Type"
+//   }));
 
 //db connection
 connectDB();
