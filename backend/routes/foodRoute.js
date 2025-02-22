@@ -1,4 +1,6 @@
 import express from "express";
+import path from 'path';
+
 import { addFood, listFood, removeFood } from "../controllers/foodController.js";
 import multer from "multer";
 
