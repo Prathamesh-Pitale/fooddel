@@ -68,9 +68,25 @@ const listFood = async (req,res) => {
 
 //remove food item
 
+const getPublicIdFromUrl = (imageUrl) => {
+    try {
+        const url = new URL(imageUrl);
+        const pathParts = url.pathname.split('/'); // Extract path parts
+        let fileNameWithExt = pathParts.pop(); // Get last segment
+        const folder = pathParts.pop(); // Get second last segment (folder name)
+
+        // Remove only the LAST extension (.png, .jpg, etc.)
+        const fileName = fileNameWithExt.replace(/\.[^.]+$/, '');
+
+        return `${folder}/${fileName}`;
+    } catch (error) {
+        console.error("❌ Error extracting public ID:", error);
+        return null;
+    }
+};
+
 const removeFood = async (req, res) => {
     try {
-        // 1️⃣ Find food item by ID
         const food = await foodModel.findById(req.body.id);
         if (!food) {
             return res.json({ success: false, message: "Food item not found" });
@@ -78,35 +94,38 @@ const removeFood = async (req, res) => {
 
         console.log("🔥 Full image URL from DB:", food.image);
 
-        // 2️⃣ Extract Cloudinary public ID
-        const imageUrl = food.image;
-        const urlParts = imageUrl.split('/');
-        const fileNameWithExt = decodeURIComponent(urlParts.pop()); // Decode URL-encoded filenames
-        const folder = urlParts[urlParts.length - 2]; // Extracts "food_images"
+        // Extract correct Cloudinary Public ID
+        const publicId = getPublicIdFromUrl(food.image);
+        if (!publicId) {
+            return res.json({ success: false, message: "Invalid image URL" });
+        }
 
-        // ✅ Remove ALL extensions (fixing `.jpeg.png` issue)
-        const fileName = fileNameWithExt.replace(/\.(jpeg|jpg|png|gif|webp|svg|bmp|tiff|jfif)$/i, '');
+        console.log("🛠 Corrected Public ID for Deletion:", publicId);
 
-        const publicId = `${folder}/${fileName}`;
+        // Check if image exists before deleting
+        try {
+            await cloudinary.api.resource(publicId);
+            console.log("✅ Image exists in Cloudinary, proceeding with deletion.");
+        } catch (checkError) {
+            console.log("⚠️ Image not found in Cloudinary, skipping deletion.");
+            return res.json({ success: false, message: "Image not found in Cloudinary" });
+        }
 
-        console.log("🛠 Final Cloudinary Public ID:", publicId);
+        // Delete from Cloudinary
+        const deleteResponse = await cloudinary.uploader.destroy(publicId);
+        console.log("🗑 Cloudinary Delete Response:", deleteResponse);
 
-        // 3️⃣ Delete from Cloudinary
-        const result = await cloudinary.uploader.destroy(publicId);
-        console.log("🗑 Cloudinary Delete Response:", result);
-
-        if (result.result !== "ok" && result.result !== "not found") {
+        if (deleteResponse.result !== "ok") {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
         }
 
-        // 4️⃣ Delete from Database
+        // Delete from database
         await foodModel.findByIdAndDelete(req.body.id);
-
-        res.json({ success: true, message: "Food removed successfully!" });
+        res.json({ success: true, message: "Food removed successfully" });
 
     } catch (error) {
         console.error("❌ Error in removeFood:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.json({ success: false, message: "Error deleting food" });
     }
 };
 
