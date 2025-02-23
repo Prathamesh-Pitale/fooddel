@@ -112,6 +112,7 @@ const removeFood = async (req, res) => {
         }
 
         // Delete from Cloudinary
+        console.log(`🔍 Extracted Public ID for Cloudinary Deletion: "${publicId}"`);
         const deleteResponse = await cloudinary.uploader.destroy(publicId);
         console.log("🗑 Cloudinary Delete Response:", deleteResponse);
 
