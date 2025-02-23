@@ -78,7 +78,7 @@ const getPublicIdFromUrl = (imageUrl) => {
         // Remove all extensions (.png, .jpeg, .jpg, etc.)
         const fileName = fileNameWithExt.replace(/\.[^.]+$/, '').replace(/\.[^.]+$/, '');
 
-        return `${folder}/${fileName}`;
+        return `${fileName}`;
     } catch (error) {
         console.error("❌ Error extracting public ID:", error);
         return null;
