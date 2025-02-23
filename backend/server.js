@@ -31,7 +31,9 @@ const allowedOrigins = [
       }
     },
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    allowedHeaders: "Content-Type,Authorization"
+    allowedHeaders: "Content-Type,Authorization,token",
+    credentials: true
+
   }));
 
 // app.use(cors({
