@@ -72,11 +72,11 @@ const getPublicIdFromUrl = (imageUrl) => {
     try {
         const url = new URL(imageUrl);
         const pathParts = url.pathname.split('/'); // Extract path parts
-        let fileNameWithExt = pathParts.pop(); // Get last segment
-        const folder = pathParts.pop(); // Get second last segment (folder name)
+        let fileNameWithExt = decodeURIComponent(pathParts.pop()); // Decode %20 (spaces)
+        const folder = pathParts.pop(); // Extract folder (e.g., "food_images")
 
-        // Remove only the LAST extension (.png, .jpg, etc.)
-        const fileName = fileNameWithExt.replace(/\.[^.]+$/, '');
+        // Remove all extensions (.png, .jpeg, .jpg, etc.)
+        const fileName = fileNameWithExt.replace(/\.[^.]+$/, '').replace(/\.[^.]+$/, '');
 
         return `${folder}/${fileName}`;
     } catch (error) {
@@ -85,7 +85,7 @@ const getPublicIdFromUrl = (imageUrl) => {
     }
 };
 
-const removeFood = async (req, res) => {
+cconst removeFood = async (req, res) => {
     try {
         const food = await foodModel.findById(req.body.id);
         if (!food) {
@@ -100,19 +100,18 @@ const removeFood = async (req, res) => {
             return res.json({ success: false, message: "Invalid image URL" });
         }
 
-        console.log("🛠 Corrected Public ID for Deletion:", publicId);
+        console.log("🛠 Extracted Public ID for Deletion:", publicId);
 
-        // Check if image exists before deleting
+        // Verify if the image exists in Cloudinary before deletion
         try {
             await cloudinary.api.resource(publicId);
             console.log("✅ Image exists in Cloudinary, proceeding with deletion.");
         } catch (checkError) {
-            console.log("⚠️ Image not found in Cloudinary, skipping deletion.");
+            console.log("⚠️ Image not found in Cloudinary:", checkError.message);
             return res.json({ success: false, message: "Image not found in Cloudinary" });
         }
 
         // Delete from Cloudinary
-        console.log(`🔍 Extracted Public ID for Cloudinary Deletion: "${publicId}"`);
         const deleteResponse = await cloudinary.uploader.destroy(publicId);
         console.log("🗑 Cloudinary Delete Response:", deleteResponse);
 
@@ -129,6 +128,7 @@ const removeFood = async (req, res) => {
         res.json({ success: false, message: "Error deleting food" });
     }
 };
+
 
 
 
