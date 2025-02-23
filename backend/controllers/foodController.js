@@ -85,7 +85,7 @@ const getPublicIdFromUrl = (imageUrl) => {
     }
 };
 
-cconst removeFood = async (req, res) => {
+const removeFood = async (req, res) => {
     try {
         const food = await foodModel.findById(req.body.id);
         if (!food) {
