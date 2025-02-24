@@ -64,28 +64,28 @@ const List = ({url}) => {
     }
   };
 
-  const editFoodCategory = async (foodId, event) => {
-    event.preventDefault(); // Prevent default behavior at the start
+  // const editFoodCategory = async (foodId, event) => {
+  //   event.preventDefault(); // Prevent default behavior at the start
   
-    const { name, value } = event.target;
+  //   const { name, value } = event.target;
     
-    setData((prevData) => ({ ...prevData, [name]: value }));
+  //   setData((prevData) => ({ ...prevData, [name]: value }));
   
-    try {
-      const formData = new FormData();
-      formData.append("category", value);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("category", value);
   
-      const response = await axios.post(`${url}/api/food/editcategory`, formData);
+  //     const response = await axios.post(`${url}/api/food/editcategory`, formData);
   
-      response.data.success 
-        ? toast.success(response.data.message) 
-        : toast.error(response.data.message);
+  //     response.data.success 
+  //       ? toast.success(response.data.message) 
+  //       : toast.error(response.data.message);
   
-    } catch (error) {
-      toast.error("Failed to update category. Please try again.");
-      console.error("Error updating food category:", error);
-    }
-  };
+  //   } catch (error) {
+  //     toast.error("Failed to update category. Please try again.");
+  //     console.error("Error updating food category:", error);
+  //   }
+  // };
   
   
 
@@ -111,7 +111,7 @@ const List = ({url}) => {
               <img src={item.image} alt='' />
 
               <p>{item.name}</p>
-              <div>
+              
               <p>{item.category}</p>
               {/* <select onChange={editFoodCategory}  name="category" >
                 <option value="Salad">Salad</option>
@@ -123,7 +123,7 @@ const List = ({url}) => {
                 <option value="Pasta">Pasta</option>
                 <option value="Noodles">Noodles</option>
               </select> */}
-              </div>
+             
             
               <p>{item.price}</p>
               <p onClick={()=>{removeFood(item._id)}} className='cursor'>X</p>

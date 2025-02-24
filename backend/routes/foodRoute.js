@@ -2,7 +2,7 @@ import express from "express";
 import path from 'path';
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
-import { addFood, listFood, removeFood, editFoodCategory } from "../controllers/foodController.js";
+import { addFood, listFood, removeFood } from "../controllers/foodController.js";
 import multer from "multer";
 
 const foodRouter = express.Router();
@@ -42,7 +42,7 @@ const upload = multer({ storage });
 foodRouter.post("/add",upload.single("image"),addFood)
 foodRouter.get("/list",listFood)
 foodRouter.post("/remove",removeFood)
-foodRouter.post("/editcategory",editFoodCategory)
+// foodRouter.post("/editcategory",editFoodCategory)
 
 
 export default foodRouter;
