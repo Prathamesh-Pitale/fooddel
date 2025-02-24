@@ -72,18 +72,23 @@ const getPublicIdFromUrl = (imageUrl) => {
     try {
         const url = new URL(imageUrl);
         const pathParts = url.pathname.split('/'); // Extract path parts
-        let fileNameWithExt = decodeURIComponent(pathParts.pop()); // Decode %20 (spaces)
+        let fileNameWithExt = decodeURIComponent(pathParts.pop()); // Decode %20, %28, etc.
         const folder = pathParts.pop(); // Extract folder (e.g., "food_images")
 
-        // Remove all extensions (.png, .jpeg, .jpg, etc.)
-        const fileName = fileNameWithExt.replace(/\.[^.]+$/, '').replace(/\.[^.]+$/, '');
+        // If ".png" is extra (like "image.jpeg.png"), remove only the last ".png"
+        if (fileNameWithExt.endsWith('.png')) {
+            fileNameWithExt = fileNameWithExt.replace(/\.png$/, '');
+        }
 
-        return `${folder}/${fileName}`;
+        const publicId = `${folder}/${fileNameWithExt}`;
+        console.log("✅ Final Extracted Public ID:", publicId);
+        return publicId;
     } catch (error) {
         console.error("❌ Error extracting public ID:", error);
         return null;
     }
 };
+
 
 const removeFood = async (req, res) => {
     try {
@@ -102,7 +107,7 @@ const removeFood = async (req, res) => {
 
         console.log("🛠 Extracted Public ID for Deletion:", publicId);
 
-        // Verify if the image exists in Cloudinary before deletion
+        // Step 1: **Verify the image exists in Cloudinary**
         try {
             await cloudinary.api.resource(publicId);
             console.log("✅ Image exists in Cloudinary, proceeding with deletion.");
@@ -111,7 +116,7 @@ const removeFood = async (req, res) => {
             return res.json({ success: false, message: "Image not found in Cloudinary" });
         }
 
-        // Delete from Cloudinary
+        // Step 2: **Delete from Cloudinary**
         const deleteResponse = await cloudinary.uploader.destroy(publicId);
         console.log("🗑 Cloudinary Delete Response:", deleteResponse);
 
@@ -119,7 +124,7 @@ const removeFood = async (req, res) => {
             return res.json({ success: false, message: "Failed to delete from Cloudinary" });
         }
 
-        // Delete from database
+        // Step 3: **Delete from Database**
         await foodModel.findByIdAndDelete(req.body.id);
         res.json({ success: true, message: "Food removed successfully" });
 
@@ -128,6 +133,7 @@ const removeFood = async (req, res) => {
         res.json({ success: false, message: "Error deleting food" });
     }
 };
+
 
 
 
