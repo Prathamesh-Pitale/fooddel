@@ -113,7 +113,7 @@ const List = ({url}) => {
               <p>{item.name}</p>
               <div>
               <p>{item.category}</p>
-              <select onChange={editFoodCategory}  name="category" >
+              {/* <select onChange={editFoodCategory}  name="category" >
                 <option value="Salad">Salad</option>
                 <option value="Rolls">Rolls</option>
                 <option value="Desserts">Desserts</option>
@@ -122,7 +122,7 @@ const List = ({url}) => {
                 <option value="Pure Veg">Pure Veg</option>
                 <option value="Pasta">Pasta</option>
                 <option value="Noodles">Noodles</option>
-              </select>
+              </select> */}
               </div>
             
               <p>{item.price}</p>
