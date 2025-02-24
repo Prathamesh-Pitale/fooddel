@@ -8,19 +8,12 @@ const List = ({url}) => {
   //const url= "http://localhost:4000";
 
   const [list, setList]= useState([]);
-  const [data, setData] =useState(
-    {
-      category:data,
-    }
-  )
+  // const [data, setData] =useState(
+  //   {
+  //     category:data,
+  //   }
+  // )
 
-  const onChangeHandler = (event) => {
-    
-  }
-
-  const onSubmitHandler = async (event) => {
-   
-  }
   
 
   const fetchList = async () =>{
