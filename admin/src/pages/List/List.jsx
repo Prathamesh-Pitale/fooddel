@@ -8,6 +8,30 @@ const List = ({url}) => {
   //const url= "http://localhost:4000";
 
   const [list, setList]= useState([]);
+  const [data, setData] =useState(
+    {
+      category:data,
+    }
+  )
+
+  const onChangeHandler = (event) => {
+    const name= event.target.name;
+    const value= event.target.value;
+
+    setData(data=>({...data, [name]: value}))
+  }
+
+  const onSubmitHandler = async (event) => {
+    event.preventDefault();
+    const formData = new FormData();
+    formData.append("category", data.category)
+    const response = await axios.post(`${url}/api/food/editcategory`,formData);
+    if (response.data.success){
+      toast.success(response.data.message);
+    }else{
+      toast.error(response.data.message);
+    }
+  }
   
 
   const fetchList = async () =>{
@@ -50,6 +74,11 @@ const List = ({url}) => {
       toast.error("Failed to remove food. Check console for details.");
     }
   };
+
+const editFoodCategory = async (foodId) => {
+
+
+};
   
 
   useEffect(() => {
@@ -75,6 +104,17 @@ const List = ({url}) => {
 
               <p>{item.name}</p>
               <p>{item.category}</p>
+              <select onChange={onChangeHandler}  name="category" >
+                <option value="Salad">Salad</option>
+                <option value="Rolls">Rolls</option>
+                <option value="Desserts">Desserts</option>
+                <option value="Sandwich">Sandwich</option>
+                <option value="Cake">Cake</option>
+                <option value="Pure Veg">Pure Veg</option>
+                <option value="Pasta">Pasta</option>
+                <option value="Noodles">Noodles</option>
+              </select>
+            
               <p>{item.price}</p>
               <p onClick={()=>{removeFood(item._id)}} className='cursor'>X</p>
             </div>

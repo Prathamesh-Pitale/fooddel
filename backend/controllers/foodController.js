@@ -66,6 +66,18 @@ const listFood = async (req,res) => {
 
 }
 
+//edit food category    
+
+const editFoodCategory = async (req,res) => {
+    try {
+        await foodModel.findByIdAndUpdate(req.body.name,{category:req.body.category})
+        res.json({success:true, message:"category updated"})
+    } catch (error) {
+        console.log(error);
+        res.json({success:false, message:"Error"});
+    }
+}
+
 //remove food item
 
 const getPublicIdFromUrl = (imageUrl) => {
@@ -139,4 +151,4 @@ const removeFood = async (req, res) => {
 
 
 
-export {addFood, listFood, removeFood}
+export {addFood, listFood, removeFood, editFoodCategory}
