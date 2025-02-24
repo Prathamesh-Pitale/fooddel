@@ -15,22 +15,11 @@ const List = ({url}) => {
   )
 
   const onChangeHandler = (event) => {
-    const name= event.target.name;
-    const value= event.target.value;
-
-    setData(data=>({...data, [name]: value}))
+    
   }
 
   const onSubmitHandler = async (event) => {
-    event.preventDefault();
-    const formData = new FormData();
-    formData.append("category", data.category)
-    const response = await axios.post(`${url}/api/food/editcategory`,formData);
-    if (response.data.success){
-      toast.success(response.data.message);
-    }else{
-      toast.error(response.data.message);
-    }
+   
   }
   
 
@@ -75,10 +64,29 @@ const List = ({url}) => {
     }
   };
 
-const editFoodCategory = async (foodId) => {
-
-
-};
+  const editFoodCategory = async (foodId, event) => {
+    event.preventDefault(); // Prevent default behavior at the start
+  
+    const { name, value } = event.target;
+    
+    setData((prevData) => ({ ...prevData, [name]: value }));
+  
+    try {
+      const formData = new FormData();
+      formData.append("category", value);
+  
+      const response = await axios.post(`${url}/api/food/editcategory`, formData);
+  
+      response.data.success 
+        ? toast.success(response.data.message) 
+        : toast.error(response.data.message);
+  
+    } catch (error) {
+      toast.error("Failed to update category. Please try again.");
+      console.error("Error updating food category:", error);
+    }
+  };
+  
   
 
   useEffect(() => {
@@ -103,8 +111,9 @@ const editFoodCategory = async (foodId) => {
               <img src={item.image} alt='' />
 
               <p>{item.name}</p>
+              <div>
               <p>{item.category}</p>
-              <select onChange={onChangeHandler}  name="category" >
+              <select onChange={editFoodCategory}  name="category" >
                 <option value="Salad">Salad</option>
                 <option value="Rolls">Rolls</option>
                 <option value="Desserts">Desserts</option>
@@ -114,6 +123,7 @@ const editFoodCategory = async (foodId) => {
                 <option value="Pasta">Pasta</option>
                 <option value="Noodles">Noodles</option>
               </select>
+              </div>
             
               <p>{item.price}</p>
               <p onClick={()=>{removeFood(item._id)}} className='cursor'>X</p>
